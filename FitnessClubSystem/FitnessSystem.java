@@ -159,13 +159,13 @@ public class FitnessSystem {
 
         switch (choice) {
             case 1:
-                membership = new BasicMembership();
+                membership = new BasicMembership(10);  // 默认每月8次预约
                 break;
             case 2:
-                membership = new SilverMembership();
+                membership = new SilverMembership(true);  // 默认有桑拿权限
                 break;
             case 3:
-                membership = new GoldMembership();
+                membership = new GoldMembership(true, true);  // 默认有优先预约+桑拿权限
                 break;
             default:
                 System.out.println("Invalid membership type.");
@@ -248,6 +248,7 @@ public class FitnessSystem {
         }
     }
 
+    // ==================== 修改点 1：memberLogin() ====================
     private void memberLogin() {
 
         Member currentMember = null;
@@ -260,10 +261,9 @@ public class FitnessSystem {
             System.out.print("Enter Password: ");
             String password = input.next();
 
-            // Search member
+            // Search member - 改用 validateCredentials()
             for (Member m : members) {
-                // 改去validatePassword(password)
-                if (m.getMemberID().equals(memberId) && m.validatePassword(password)) {
+                if (m.validateCredentials(memberId, password)) {  // ← 改这里
                     currentMember = m;
                     break;
                 }
@@ -320,7 +320,7 @@ public class FitnessSystem {
         } while (!choice.equals("5")); // 字符串比较使用 .equals()
     }
 
-
+    // ==================== 修改点 2：trainerLogin() ====================
     private void trainerLogin() {
         Trainer currentTrainer = null;
 
@@ -333,10 +333,9 @@ public class FitnessSystem {
             System.out.print("Enter Password: ");
             String password = input.next();
 
-            // 2. 核心：在 trainers 列表（文件夹）中寻找具体的某个人（简历）
+            // 2. 核心：改用 validateCredentials()
             for (Trainer t : trainers) {
-                // 注意：这里调用的是 t 的方法，而不是 trainers 的方法
-                if (t.getUserId().equals(trainerId) && t.validatePassword(password)) {
+                if (t.validateCredentials(trainerId, password)) {  // ← 改这里
                     currentTrainer = t; // 找到了，把个体提出来
                     break;
                 }
@@ -386,6 +385,7 @@ public class FitnessSystem {
         }
     }
 
+    // ==================== 修改点 3：adminLogin() ====================
     private void adminLogin() {
         Admin currentAdmin = null;
 
@@ -398,10 +398,9 @@ public class FitnessSystem {
             System.out.print("Enter Password: ");
             String password = input.next();
 
-            // 2. 在 admins 列表(文件夹)中寻找具体的 Admin(个人)
+            // 2. 改用 validateCredentials()
             for (Admin a : admins) {
-                // 这里确保你已经在 User 或 Admin 类里写好了 getUserId() 和 validatePassword()
-                if (a.getUserId().equals(id) && a.validatePassword(password)) {
+                if (a.validateCredentials(id, password)) {  // ← 改这里
                     currentAdmin = a; 
                     break;
                 }
@@ -459,4 +458,6 @@ public class FitnessSystem {
         FitnessSystem system = new FitnessSystem();
         system.startSystem();
     }
+
+    
 }
