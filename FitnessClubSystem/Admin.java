@@ -6,55 +6,104 @@ import java.util.Scanner;
 /*
  * Admin Class
  * ---------------------------------------------------
- * Inherits from User.
+ * Represents a system administrator.
+ * 
+ * Responsibilities:
+ * - Store admin login information
+ * - Validate login credentials
+ * - Manage members, equipment, and classes
+ * - Generate revenue reports
+ * 
+ * Relationship:
+ * - ASSOCIATION with Member, Equipment, FitnessClass, Trainer
+ * 
+ * @author Tang Zhi Hao
+ * @version 2.0
  */
 
-/**
- * Admin Class
- * ---------------------------------------------------
- * 负责人: Tang Zhi Hao
- * 任务: 实现管理端逻辑，包括收入统计、设备维护、教练分配等。
- */
+public class Admin {
 
-// (admin -> 先要有members, equiment, trainer )
-public class Admin extends User {
+    private String adminId;
+    private String password;
+    Scanner input = new Scanner(System.in);
 
-    Scanner input = new Scanner(System.in); 
-    public Admin(String userId, String password) {
-        super(userId, password);
+    /*
+     * Parameterized constructor for Admin
+     * 
+     * @param adminId  Unique admin identifier
+     * @param password Login password
+     */
+    public Admin(String adminId, String password) {
+        this.adminId = adminId;
+        this.password = password;
     }
 
-    @Override
+    // ==================== 新增：登录验证方法 ====================
+
+    /*
+     * Validates login credentials
+     * 
+     * @param inputId       Admin ID entered by user
+     * @param inputPassword Password entered by user
+     * @return true if credentials match, false otherwise
+     */
+    public boolean validateCredentials(String inputId, String inputPassword) {
+        return this.adminId.equals(inputId) && this.password.equals(inputPassword);
+    }
+
+    // ==================== Getters ====================
+
+    public String getAdminId() {
+        return adminId;
+    }
+
+    public String getUserId() {
+        return adminId;  // For backward compatibility with old code
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    // ==================== Display Methods ====================
+
+    /*
+     * Displays the admin menu
+     */
     public void displayMenu() {
         System.out.println("\n=== Admin Menu ===");
         System.out.println("1. Manage Members (View Active/Expired)");
-        System.out.println("2. Manage Equipment (Flag Maintenance)"); 
+        System.out.println("2. Manage Equipment (Flag Maintenance)");
         System.out.println("3. Manage Staff (Assign Trainer to Classes)");
-        System.out.println("4. Generate Revenue Report"); 
+        System.out.println("4. Generate Revenue Report");
         System.out.println("5. Logout");
     }
 
-    //zhi hao
-    // TODO: 1. Manage meber / 加判定，expired的话就不能成功login // 
-    //zhi hao
-    public void manageMembers(ArrayList<Member> members){
-        
+    // ==================== Business Logic Methods ====================
+
+    /*
+     * Manage member status
+     * Allows admin to view all members and update their status (Active/Expired)
+     * 
+     * @param members List of all members
+     */
+    public void manageMembers(ArrayList<Member> members) {
+
         System.out.println("\n--- Member List ---");
 
-        if(members.isEmpty()){
+        if (members.isEmpty()) {
             System.out.println("No members found.");
             return;
         }
 
-        // jy 
         System.out.printf("%-8s | %-15s | %-10s | %-10s\n", "ID", "Name", "Type", "Status");
         System.out.println("------------------------------------------------------------");
         for (Member m : members) {
-            System.out.printf("%-8s | %-15s | %-10s | %-10s\n", 
-                m.getMemberID(), 
-                m.getName(), 
-                m.getMembership().getMembershipName(),
-                m.getStatus());
+            System.out.printf("%-8s | %-15s | %-10s | %-10s\n",
+                    m.getMemberID(),
+                    m.getName(),
+                    m.getMembership().getMembershipName(),
+                    m.getStatus());
         }
 
         // 2. 选择目标
@@ -84,7 +133,7 @@ public class Admin extends User {
             System.out.println("Current Status: " + foundMember.getStatus());
             System.out.println("Select New Status: [1] Active  [2] Expired  [3] Cancel");
             System.out.print("Choice: ");
-            
+
             String choice = input.next();
             switch (choice) {
                 case "1":
@@ -107,13 +156,14 @@ public class Admin extends User {
 
         // 5. 重要：提示数据已更改
         System.out.println("Note: Status updated in memory. Data will be finalized on system exit.");
-
-        // jy
     }
-    //zhi hao
 
-    // 实现设备管理逻辑
-    // 逻辑: 接收一个 Equipment 的 ArrayList，循环打印并允许 Admin 输入 ID 将其设为 "Under Maintenance"
+    /*
+     * Manage equipment
+     * Allows admin to view, add, update, and delete equipment
+     * 
+     * @param equipments List of all equipment
+     */
     public void manageEquipment(ArrayList<Equipment> equipments) {
         Scanner input = new Scanner(System.in);
         if (equipments == null) {
@@ -149,8 +199,13 @@ public class Admin extends User {
         } while (!sub.equals("0"));
     }
 
-    // 实现教练分配逻辑 (这是你们讨论的核心)
-    // 逻辑: 接收课程列表和教练列表，通过 ID 匹配来调用 FitnessClass 的 setInstructor 方法
+    /*
+     * Manage class assignments
+     * Allows admin to create classes, set schedules, assign trainers, and delete classes
+     * 
+     * @param classes  List of all fitness classes
+     * @param trainers List of all trainers
+     */
     public void assignClass(ArrayList<FitnessClass> classes, ArrayList<Trainer> trainers) {
         Scanner input = new Scanner(System.in);
         String choice;
@@ -188,9 +243,11 @@ public class Admin extends User {
         }
     }
 
-    /**
-     * 已完成: 收入报表生成
-     * 注意: 这里还可以扩展统计不同等级会员的人数 (Basic: X, Gold: Y)
+    /*
+     * Generate monthly revenue report
+     * Displays total revenue and membership breakdown
+     * 
+     * @param members List of all members
      */
     public void generateMonthlyRevenueReport(ArrayList<Member> members) {
         double totalRevenue = 0;
@@ -201,11 +258,12 @@ public class Admin extends User {
             // 进阶逻辑: 统计各等级人数
             String type = m.getMembership().getMembershipName();
             if (type.equalsIgnoreCase("Gold")) {
-                goldCount++;}
-            else if (type.equalsIgnoreCase("Silver")) {
-                silverCount++;}
-            else {
-                basicCount++;}
+                goldCount++;
+            } else if (type.equalsIgnoreCase("Silver")) {
+                silverCount++;
+            } else {
+                basicCount++;
+            }
         }
 
         System.out.println("\n===== Monthly Revenue Report =====");
@@ -214,5 +272,32 @@ public class Admin extends User {
         System.out.println("Total Monthly Revenue: RM " + totalRevenue);
         System.out.println("==================================");
     }
-    
+
+    // ==================== Object Overrides ====================
+
+    /*
+     * Compares this Admin to another object
+     * Two Admins are considered equal if they have the same adminId
+     * 
+     * @param obj Object to compare with
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Admin admin = (Admin) obj;
+        return adminId.equals(admin.adminId);
+    }
+
+    /*
+     * Returns a string representation of the Admin object
+     * 
+     * @return Formatted string with admin details
+     */
+    @Override
+    public String toString() {
+        return String.format("Admin[ID=%s]", adminId);
+    }
+
 }
