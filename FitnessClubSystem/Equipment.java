@@ -16,6 +16,9 @@ import java.util.Scanner;
  * ---------------------------------------------------
  * 负责人: Low Kar Wai
  * 任务: 提供器材的基础属性，并让 Admin 能够修改其维护状态。
+ * 
+ * @author Low Kar Wai
+ * @version 2.0
  */
 
 // (equipment -> admin // 这个part是独立的，done了给admin连接 )
@@ -168,17 +171,50 @@ public class Equipment {
         }
     }
 
-
     // --- Getters (For use by Admin and FileManager) ---
-    public String getEquipmentId() { return equipmentId; }
+    public String getEquipmentId() { 
+        return equipmentId; 
+    }
+    
     public String getName() {
-         return name; }
-    public String getStatus() { return status; }
+        return name; 
+    }
+    
+    public String getStatus() { 
+        return status; 
+    }
     
     // --- Formatting string used for file saving ---
     public String toFileString() {
         return equipmentId + "|" + name + "|" + status;
     }
 
+    // ==================== 新增：Object Overrides ====================
+
+    /**
+     * Compares this Equipment to another object
+     * Two Equipment objects are considered equal if they have the same equipmentId
+     * 
+     * @param obj Object to compare with
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Equipment equipment = (Equipment) obj;
+        return equipmentId.equals(equipment.equipmentId);
+    }
+
+    /**
+     * Returns a string representation of the Equipment object
+     * 
+     * @return Formatted string with equipment details
+     */
+    @Override
+    public String toString() {
+        return String.format("Equipment[ID=%s, Name=%s, Status=%s]", 
+            equipmentId, name, status);
+    }
 
 }
