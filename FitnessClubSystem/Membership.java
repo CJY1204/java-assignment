@@ -5,6 +5,9 @@ package FitnessClubSystem;
  * ------------------------
  * Demonstrates ABSTRACTION & POLYMORPHISM.
  * Different membership types override calculateFee().
+ * 
+ * @author Cheng Jun Yu
+ * @version 2.0
  */
 public abstract class Membership {
 
@@ -20,8 +23,8 @@ public abstract class Membership {
         return membershipName;
     }
 
-    public double getPrice() { 
-        return price; 
+    public double getPrice() {
+        return price;
     }
 
     public abstract double calculateFee();
@@ -36,5 +39,12 @@ public abstract class Membership {
      */
     public abstract boolean hasSaunaAccess();
 
-}
+    /*
+     * Returns a string representation of the Membership object
+     */
+    @Override
+    public String toString() {
+        return String.format("%s Membership (RM%.2f)", membershipName, price);
+    }
 
+}
