@@ -17,6 +17,16 @@ import java.util.Scanner;
  * Booking cannot exist without Member and FitnessClass.
  */
 
+/**
+ * Booking Class
+ * ---------------------------------------------------
+ * 负责人: Khoo See Ze
+ * 任务: 处理课程预约逻辑，管理预约状态。
+ * 
+ * @author Khoo See Ze
+ * @version 2.0
+ */
+
 public class Booking {
 
     private String bookingId;
@@ -48,7 +58,7 @@ public class Booking {
 
     // 用于写入 TXT 的格式化字符串
     public String toFileString() {
-        return bookingId + "|" + member.getUserId() + "|" + fitnessClass.getClassId() + "|" + sessionDate + "|" + status + "|" + memberTier;
+        return bookingId + "|" + member.getMemberID() + "|" + fitnessClass.getClassId() + "|" + sessionDate + "|" + status + "|" + memberTier;
     }
     
     // --- 核心业务方法 (给 Member.java 调用) ---
@@ -119,4 +129,38 @@ public class Booking {
             System.out.println("Booking failed. Please check class availability.");
         }
     }
+
+    // ==================== 新增：Object Overrides ====================
+
+    /**
+     * Compares this Booking to another object
+     * Two Booking objects are considered equal if they have the same bookingId
+     * 
+     * @param obj Object to compare with
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Booking booking = (Booking) obj;
+        return bookingId.equals(booking.bookingId);
+    }
+
+    /**
+     * Returns a string representation of the Booking object
+     * 
+     * @return Formatted string with booking details
+     */
+    @Override
+    public String toString() {
+        return String.format("Booking[ID=%s, Member=%s, Class=%s, Date=%s, Status=%s, Tier=%s]",
+            bookingId, 
+            member.getName(), 
+            fitnessClass.getClassName(), 
+            sessionDate, 
+            status, 
+            memberTier);
+    }
+
 }
